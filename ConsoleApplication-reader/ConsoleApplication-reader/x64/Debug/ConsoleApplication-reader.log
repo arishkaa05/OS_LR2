@@ -1,0 +1,3 @@
+﻿  ConsoleApplication-reader.cpp
+C:\Users\avpokazatskaia\source\repos\OS_LR2\ConsoleApplication-reader\ConsoleApplication-reader\ConsoleApplication-reader.cpp(41,20): warning C4154: удаление массива; выполнено преобразование к указателю
+  ConsoleApplication-reader.vcxproj -> C:\Users\avpokazatskaia\source\repos\OS_LR2\ConsoleApplication-reader\x64\Debug\ConsoleApplication-reader.exe
