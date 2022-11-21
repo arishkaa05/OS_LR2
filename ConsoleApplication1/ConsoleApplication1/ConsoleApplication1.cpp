@@ -28,6 +28,7 @@ void returnMemory();
 int main()
 {
     SYSTEM_INFO SYSTEM_INFO;
+    GetSystemInfo(&SYSTEM_INFO);
     int c;
     menu();
     cin >> c;
@@ -51,7 +52,7 @@ int main()
             break;
         case 4:
             cout << "\nYour choice: 4 - reservation of the region in automatic mode and in the mode enter the address of the beginning of the region\n";
-            reservRegion(SYSTEM_INFO); 
+            reservRegion(SYSTEM_INFO);
             break;
         case 5:
             cout << "\nYour choice: 5 - reserving a region and transferring physical memory to it in automatic mode and in the mode of entering the address of the beginning of the region\n";
@@ -93,29 +94,31 @@ void menu() {
 };
 
 void computer_system_info(SYSTEM_INFO& SYSTEM_INFO) {
-    WORD dwOemId;
-   
-    dwOemId = SYSTEM_INFO.wProcessorArchitecture; //Архитектура системы процессора.
-    if (dwOemId == PROCESSOR_ARCHITECTURE_AMD64)
+    WORD archType;
+
+    archType = SYSTEM_INFO.wProcessorArchitecture;
+    if (archType == PROCESSOR_ARCHITECTURE_AMD64)
         cout << "x64 (AMD or Intel)";
-    else if (dwOemId == PROCESSOR_ARCHITECTURE_IA32_ON_WIN64)
-        cout << "WOW64";
-    else if (dwOemId == PROCESSOR_ARCHITECTURE_IA64)
-        cout << "Intel Itanium Processor Family (IPF)";
-    else if (dwOemId == PROCESSOR_ARCHITECTURE_INTEL)
+    else if (archType == PROCESSOR_ARCHITECTURE_ARM)
+        cout << "ARM";
+    else if (archType == PROCESSOR_ARCHITECTURE_IA64)
+        cout << "Intel Itanium-based";
+    else if (archType == PROCESSOR_ARCHITECTURE_INTEL)
         cout << "x86";
-    else if (dwOemId == PROCESSOR_ARCHITECTURE_UNKNOWN)
+    else if (archType == PROCESSOR_ARCHITECTURE_UNKNOWN)
         cout << "Unknown";
-    cout << "\narchitechture\n";
-    cout << "Reserved for the future: " << SYSTEM_INFO.wReserved << endl; //Зарезервировано на будущее.
-    cout << "Page Size : " << SYSTEM_INFO.dwPageSize << endl; //Размер страницы и гранулярность страничной защиты и обязательства. 
-    cout << "Pointer to low memory address: " << SYSTEM_INFO.lpMinimumApplicationAddress << endl; //Указатель на младший адрес памяти, доступный приложениям и библиотекам динамической компоновки (DLL).
-    cout << "Pointer to high memory address: " << SYSTEM_INFO.lpMaximumApplicationAddress << endl; //Указатель на старший адрес памяти, доступный приложениям и библиотекам динамической компоновки (DLL).
-    cout << "The set of processors configured on the system: " << endl << std::bitset<32>(SYSTEM_INFO.dwActiveProcessorMask) << endl; //Маска, представляющая набор процессоров, сконфигурированных в системе.
-    cout << "The number of processors in the system : " << SYSTEM_INFO.dwNumberOfProcessors << endl; //Количество процессоров в системе.
-    cout << "Granularity for start address: "<< SYSTEM_INFO.dwAllocationGranularity << endl; //Гранулярность для начального адреса, в котором может быть выделена виртуальная память.
-    cout << "Architecturally dependent system processor level: " << SYSTEM_INFO.wProcessorLevel << endl; //Уровень архитектурно-зависимого прицессора системы.
-    cout << "Architecturally dependent processor revision: " << SYSTEM_INFO.wProcessorRevision << "\n\n"; //Ревизия архитектурно-зависимого процессора. 
+    cout << " architechture\n";
+
+    cout << "The page size: " << SYSTEM_INFO.dwPageSize << endl;
+    cout << "The lowest memory address accessible: " << SYSTEM_INFO.lpMinimumApplicationAddress << endl;
+    cout << "The highest memory address accessible: " << SYSTEM_INFO.lpMaximumApplicationAddress << endl;
+    cout << "A mask representing the set of processors\n"
+        "configured into the system: " << endl << std::bitset<32>(SYSTEM_INFO.dwActiveProcessorMask) << endl;
+    cout << "The number of logical processors in the current group: " << SYSTEM_INFO.dwNumberOfProcessors << endl;
+    cout << "The granularity for the starting address \nat which virtual memory can be allocated: "
+        << SYSTEM_INFO.dwAllocationGranularity << endl;
+    cout << "The architecture-dependent processor level: " << SYSTEM_INFO.wProcessorLevel << endl;
+    cout << "The architecture-dependent processor revision: " << SYSTEM_INFO.wProcessorRevision << "\n\n";
     system("pause");
     CLS;
 };
@@ -168,7 +171,7 @@ void stateMemotyArea() {
     cout << "Allocation base address: " << lpBuffer.AllocationBase << endl;         // базовый адрес выделения
     cout << "Initial access protection: " << lpBuffer.AllocationProtect << ((lpBuffer.AllocationProtect != 0) ? "" : " (caller does not have access)") << endl; // первоначальная защита доступа
     cout << "Size, in bytes, of region" << lpBuffer.RegionSize << endl;             // размер области в байтах
-    state = lpBuffer.State;         
+    state = lpBuffer.State;
     if (state == MEM_COMMIT)
         cout << "Committed pages\n";        // выделено
     else if (state == MEM_FREE)
@@ -243,7 +246,7 @@ void reservTransfRegion(SYSTEM_INFO& SYSTEM_INFO) {
     cout << "\n1 - Region reservation in automatic mode\n2 - Region reservation in mode enter the address of the beginning of the region";
     cout << "\nYour choice: ";
     cin >> c;
-    if (c == 1 || c == 2)   {
+    if (c == 1 || c == 2) {
         if (c == 2) {
             cout << "Enter a memory location to determine the state: ";
             cin >> address;
@@ -255,9 +258,9 @@ void reservTransfRegion(SYSTEM_INFO& SYSTEM_INFO) {
         system("pause");
         CLS;
     }
-    else 
+    else
         cout << "An error has occurred! Try again.\n";
-    
+
 };
 
 void writeData() {
@@ -356,7 +359,7 @@ void changeProtection(DWORD& newLevel) {
     else newLevel = PAGE_TARGETS_NO_UPDATE;
 }
 
-void returnMemory() {       
+void returnMemory() {
     LPVOID address = NULL;
     cout << "Enter the memory location to free:";
     cin >> address;
